@@ -26,6 +26,23 @@ const expected2 = -1;
  */
 function balanceIndex(nums) {
   // your code here
+  let totalSum = 0;
+  for (let i = 0; i < nums.length; i++) {
+    totalSum += nums[i];
+  }
+  let leftSum = 0;
+  let rightSum = 0;
+  for (let i = 0; i < nums.length; i++) {
+    if (leftSum > rightSum) {
+      return -1;
+    }
+    rightSum = totalSum - leftSum - nums[i];
+    if (rightSum === leftSum) {
+      return i;
+    }
+    leftSum += nums[i];
+  }
+  return -1;
 }
 
 const result1 = balanceIndex(nums1);
