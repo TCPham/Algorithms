@@ -1,4 +1,4 @@
-from typing import Any, Self
+from typing import Any, Self, Type
 
 
 class NonNumericDataError(Exception):
@@ -64,7 +64,7 @@ class SinglyLinkedList:
             `data` (`Any`): The data to be added to the new node.
 
         Returns:
-            `Self`: `SinglyLinkedList` - This list.
+            `SinglyLinkedList`: This list.
         """
         # create a new ListNode
         new_node = ListNode(data)
@@ -96,7 +96,7 @@ class SinglyLinkedList:
             `vals` (`list[Any]`): List of values to be added to the list.
 
         Returns:
-            `Self`: `SinglyLinkedList` - This list.
+            `SinglyLinkedList`: This list.
         """
         for item in vals:
             self.insert_at_back(item)
@@ -125,7 +125,7 @@ class SinglyLinkedList:
             `data` (`Any`): The data to be added to the new node.
 
         Returns:
-            `Self`: `SinglyLinkedList` - This list.
+            `SinglyLinkedList`: This list.
         """
         new_node = ListNode(data)
         if self.is_empty():
@@ -267,23 +267,14 @@ class SinglyLinkedList:
         Returns:
             `Any`: The data of the second to last node or `None` if there is no second to last node.
         """
-        # empty list
-        if self.is_empty():
+        if self.is_empty() or self.head.next is None:
             return None
 
-        # if there is only one node
-        if not self.head.next:
-            data = self.head.data
-            self.head = None
-            return data
-
-        # loop to second-to-last node
         runner = self.head
         while runner.next.next:
             runner = runner.next
 
-        data = runner.data
-        return data
+        return runner.data
 
     def remove_val(self, val):
         """
@@ -296,10 +287,11 @@ class SinglyLinkedList:
             `bool`: Indicates if a node was removed or not.
         """
         if self.is_empty():
-            return None
+            return False
 
-        if self.head == val:
-            self.head.data = self.head.next
+        # If the head needs to be removed
+        if self.head.data == val:
+            self.head = self.head.next
             return True
 
         runner = self.head
@@ -308,6 +300,7 @@ class SinglyLinkedList:
                 runner.next = runner.next.next
                 return True
             runner = runner.next
+
         return False
 
     # EXTRA
@@ -322,20 +315,126 @@ class SinglyLinkedList:
         Returns:
             `bool`: To indicate whether the node was pre-pended or not.
         """
-        pass
+        if self.is_empty():
+            return False
+
+        new_node = ListNode(new_val)
+
+        # If we need to prepend before the head
+        if self.head.data == target_val:
+            new_node.next = self.head
+            self.head = new_node
+            return True
+
+        runner = self.head
+        while runner.next:
+            if runner.next.data == target_val:
+                new_node.next = runner.next
+                runner.next = new_node
+                return True
+            runner = runner.next
+
+        return False
+
+    def concat(self, add_list):
+        """
+        Concatenates the nodes of a given list onto the back of this list.
+
+        Args:
+            `add_list`: An instance of a different list whose nodes will be added to the back of this list.
+
+        Returns:
+            `SinglyLinkedList`: This list with the added nodes.
+        """
+
+        if self.is_empty():
+            self.head = add_list.head
+        else:
+            runner = self.head
+            while runner.next is not None:
+                runner = runner.next
+            runner.next = add_list.head
+
+        return self
+
+    def move_min_to_front(self):
+        """
+        Finds the node with the smallest data and moves that node to the front of this list.
+
+        Returns:
+            `SinglyLinkedList`: This list with the smallest node moved to the front.
+        """
+
+        if self.head is None or self.head.next is None:
+            return self
+
+        min_node = self.head
+        min_prev = None
+        runner = self.head
+        prev = None
+
+        while runner:
+            if runner.data < min_node.data:
+                min_node = runner
+                min_prev = prev
+            prev = runner
+            runner = runner.next
+
+        if min_node != self.head:
+            if min_prev is not None:
+                min_prev.next = min_node.next
+            min_node.next = self.head
+            self.head = min_node
+
+        return self
+
+    def split_on_val(self, val):
+        """
+        Splits this list into two lists where the second list starts with the node that has the given value.
+
+        Args:
+            `val`: The value in the node that the list should be split on.
+
+        Returns:
+            `SinglyLinkedList`|`None`: The new list containing the nodes that are no longer in this list, or `None` if val is not found.
+        """
+
+        if self.head is None:
+            return None
+
+        runner = self.head
+        prev = None
+
+        while runner:
+            if runner.data == val:
+                if prev is not None:
+                    prev.next = None
+
+                new_list = SinglyLinkedList()
+                new_list.head = runner
+                return new_list
+
+            prev = runner
+            runner = runner.next
+
+        return None
 
 
 # Test case
 my_sll = SinglyLinkedList()
 my_sll.insert_at_back_many([5, 10, 4, 3, 6, 1, 7, 2])
 
-print(my_sll)
-# head: 5 -> 10 -> 4 -> 3 -> 6 -> 1 -> 7 -> 2 -> None
+second_list = SinglyLinkedList()
+second_list.insert_at_back_many([32, 19, 88, 14])
 
-my_sll.prepend(12, 6)
-# head: 5 -> 10 -> 4 -> 3 -> 12 -> 6 -> 1 -> 7 -> 2 -> None
+print("concat:")
+print(my_sll.concat(second_list))
+# head: 5 -> 10 -> 4 -> 3 -> 12 -> 6 -> 1 -> 7 -> 2 -> 32 -> 19 -> 88 -> 14 -> None
 
-print(my_sll.second_to_last())
+print("move_min_to_front")
+print(my_sll.move_min_to_front())
+# head: 1 -> 5 -> 10 -> 4 -> 3 -> 12 -> 6 -> 7 -> 2 -> 32 -> 19 -> 88 -> 14 -> None
 
-print(my_sll.remove_val(4))
-print(my_sll)
+print("split_on_val")
+print(my_sll.split_on_val(7))
+# head: 7 -> 2 -> 32 -> 19 -> 88 -> 14 -> None
