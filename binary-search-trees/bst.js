@@ -190,6 +190,9 @@ class BinarySearchTree {
    */
   range(startNode = this.root) {
     // your code here
+    if (this.isEmpty()) {
+      return null;
+    }
     var result = this.max(startNode) - this.min(startNode);
     return result;
   }
