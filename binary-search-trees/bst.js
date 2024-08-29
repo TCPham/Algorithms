@@ -204,42 +204,31 @@ class BinarySearchTree {
    * @returns {BinarySearchTree} This tree.
    */
   insert(newVal, current = this.root) {
-    // pseudo code first!
-    // instantiate a new node
-    // check if tree is empty
-    // if empty, then set root to new node
-    //    return self
-    //
-    // if not, while loop
-    //    compare newVal with root.data
-    //    if newVal is less
-    //      if left is null, current.left is new node
-    //        return self
-    //      if not current = current.left
+    const node = new BSTNode(newVal);
 
     if (this.isEmpty()) {
-      this.root = new BSTNode(newVal);
+      this.root = node;
       return this;
     }
 
-    let parent = null;
+    while (true) {
+      if (newVal <= current.data) {
+        if (current.left === null) {
+          current.left = node;
+          return this;
+        }
 
-    while (current) {
-      parent = current;
-      if (newVal < current.data) {
         current = current.left;
-      } else if (newVal > current.data) {
-        current = current.right;
       } else {
-        return this;
+        // newVal is greater than current.data
+        if (current.right === null) {
+          current.right = node;
+          return this;
+        }
+
+        current = current.right;
       }
     }
-    if (newVal < parent.data) {
-      parent.left = new BSTNode(newVal);
-    } else if (newVal > parent.data) {
-      parent.right = new BSTNode(newVal);
-    }
-    return this;
   }
 
   /**
@@ -253,18 +242,24 @@ class BinarySearchTree {
    * @returns {BinarySearchTree} This tree.
    */
   insertRecursive(newVal, current = this.root) {
-    // your code here
-    // base case
     if (this.isEmpty()) {
       this.root = new BSTNode(newVal);
       return this;
     }
-    // iterate & recursive call
-    if (newVal < current.data) {
-      return this.insertRecursive(newVal, current.left);
-    } else if (newVal > current.data) {
+
+    if (newVal > current.data) {
+      if (current.right === null) {
+        current.right = new BSTNode(newVal);
+        return this;
+      }
       return this.insertRecursive(newVal, current.right);
     }
+
+    if (current.left === null) {
+      current.left = new BSTNode(newVal);
+      return this;
+    }
+    return this.insertRecursive(newVal, current.left);
   }
 }
 
@@ -361,7 +356,3 @@ console.log(`${treeRange} should equal 13`);
 
 const subtreeRange = threeLevelTree.range(fiveNode);
 console.log(`${subtreeRange} should equal 4`);
-
-threeLevelTree.print();
-threeLevelTree.insert(14);
-threeLevelTree.print();
