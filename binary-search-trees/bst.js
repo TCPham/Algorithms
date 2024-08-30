@@ -220,7 +220,6 @@ class BinarySearchTree {
 
         current = current.left;
       } else {
-        // newVal is greater than current.data
         if (current.right === null) {
           current.right = node;
           return this;
@@ -316,10 +315,100 @@ class BinarySearchTree {
     }
     return vals;
   }
+
+  /**
+   * BFS order: horizontal rows top-down left-to-right.
+   * Converts this BST into an array following Breadth First Search order.
+   * Example on the fullTree var:
+   * [25, 15, 50, 10, 22, 35, 70, 4, 12, 18, 24, 31, 44, 66, 90]
+   * @param {Node} current The current node during the traversal of this tree.
+   * @returns {Array<number>} The data of all nodes in BFS order.
+   */
+  toArrLevelorder(current = this.root) {
+    const queue = [];
+    const vals = [];
+
+    if (current) {
+      queue.push(current);
+    }
+
+    while (queue.length > 0) {
+      const dequeuedNode = queue.shift();
+      vals.push(dequeuedNode.data);
+
+      if (dequeuedNode.left) {
+        queue.push(dequeuedNode.left);
+      }
+
+      if (dequeuedNode.right) {
+        queue.push(dequeuedNode.right);
+      }
+    }
+    return vals;
+  }
+
+  /**
+   * Calculates the height of the tree which is based on how many nodes from
+   * top to bottom (whichever side is taller).
+   * - Time: O(?).
+   * - Space: O(?).
+   * @param {Node} node The current node during traversal of this tree.
+   * @returns {number} The height of the tree.
+   */
+  height(node = this.root) {
+    if (!node) {
+      return 0;
+    }
+    // base case returns 0 but then the + 1 starts incrementing for each recursive call
+    return 1 + Math.max(this.height(node.left), this.height(node.right));
+  }
+
+  /**
+   * Recursively counts the total number of nodes in this tree.
+   * - Time: O(?).
+   * - Space: O(?).
+   * @param {Node} node The current node during the traversal of this tree.
+   * @returns {number} The total number of nodes.
+   */
+  size(node = this.root) {
+    if (!node) {
+      return 0;
+    }
+    // Translates into something like: 1 + 1 + 1 + 1 + 0 + 1 + 1 + 1 + 0
+    // instead of using a sum variable.
+    return 1 + this.size(node.left) + this.size(node.right);
+  }
+
+  /**
+   * Determines if this tree is a full tree. A full tree is a tree where every
+   * node has both a left and a right except for the leaf nodes (last nodes)
+   * - Time: O(?).
+   * - Space: O(?).
+   * @param {Node} node The current node during traversal of this tree.
+   * @returns {boolean} Indicates if this tree is full.
+   */
+  isFull(node = this.root) {
+    // If empty tree
+    if (!node) {
+      return false;
+    }
+
+    // if leaf node, leaf node is the end which means it has no left or right
+    if (!node.left && !node.right) {
+      return true;
+    }
+
+    // if both left and right subtrees are not null and
+    // both left and right subtrees are full
+    if (node.left && node.right) {
+      return this.isFull(node.left) && this.isFull(node.right);
+    }
+    return false;
+  }
 }
 
 const emptyTree = new BinarySearchTree();
-/* oneLevelTree
+/* oneNodeTree
         root
         10
 */
@@ -383,37 +472,37 @@ fullTree
   .insert(66)
   .insert(90);
 
-// oneNodeTree.print();
-// twoLevelTree.print();
-
-threeLevelTree.print();
-
-const searchVal1 = 13;
-const expected1 = true;
-
-const searchVal2 = 1;
-const expected2 = false;
-
-const result1 = threeLevelTree.contains(searchVal1);
+const result1 = emptyTree.toArrLevelorder();
+const expected1 = [];
 console.log(`${result1} should equal ${expected1}`);
 
-const result2 = threeLevelTree.contains(searchVal2);
+const result2 = oneNodeTree.toArrLevelorder();
+const expected2 = [10];
 console.log(`${result2} should equal ${expected2}`);
 
-const result3 = threeLevelTree.containsRecursive(searchVal1);
-console.log(`${result3} should equal ${expected1}`);
+const result3 = twoLevelTree.toArrLevelorder();
+const expected3 = [10, 5, 15];
+console.log(`${result3} should equal ${expected3}`);
 
-const result4 = threeLevelTree.containsRecursive(searchVal2);
-console.log(`${result2} should equal ${expected2}`);
+const result4 = threeLevelTree.toArrLevelorder();
+const expected4 = [10, 5, 15, 2, 6, 13];
+console.log(`${result4} should equal ${expected4}`);
 
-const treeRange = threeLevelTree.range();
-console.log(`${treeRange} should equal 13`);
+const result5 = fullTree.toArrLevelorder();
+const expected5 = [25, 15, 50, 10, 22, 35, 70, 4, 12, 18, 24, 31, 44, 66, 90];
 
-const subtreeRange = threeLevelTree.range(fiveNode);
-console.log(`${subtreeRange} should equal 4`);
+const result6 = fullTree.height();
+const expected6 = 4;
+console.log(`${result6} should equal ${expected6}`);
 
-console.log(fullTree.toArrPreorder());
+const result7 = fullTree.size();
+const expected7 = 15;
+console.log(`${result7} should equal ${expected7}`);
 
-console.log(fullTree.toArrInorder());
+const result9 = threeLevelTree.isFull();
+const expected9 = false;
+console.log(`${result9} should equal ${expected9}`);
 
-console.log(fullTree.toArrPostorder());
+const result8 = fullTree.isFull();
+const expected8 = true;
+console.log(`${result8} should equal ${expected8}`);
