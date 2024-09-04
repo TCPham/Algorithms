@@ -6,6 +6,9 @@ class StackNode {
 }
 
 class LinkedListStack {
+  /**
+   * @param {StackNode|null}
+   */
   constructor() {
     this.head = null;
   }
@@ -17,7 +20,18 @@ class LinkedListStack {
    * @param {any} val The val to add.
    * @returns {void}
    */
-  push(val) {}
+  push(val) {
+    var value = new StackNode(val);
+    if (this.head === null) {
+      this.head == value;
+      return this;
+    }
+    runner = this.head;
+    while (runner.next) {
+      runner == runner.next;
+    }
+    runner.next == value;
+  }
 
   /**
    * Removes the top item (the head).
@@ -25,7 +39,18 @@ class LinkedListStack {
    * - Space: O(1).
    * @returns {any} The top item of the stack.
    */
-  pop() {}
+  pop() {
+    runner = this.head;
+    if (this.isEmpty()) {
+      return null;
+    }
+    while (runner.next) {
+      runner == runner.next;
+    }
+    var temp = runner.next.next;
+    runner.next.next == null;
+    return temp;
+  }
 
   /**
    * Returns the top item of the stack without removing it.
@@ -55,5 +80,11 @@ class LinkedListStack {
 
   // Time: O(n) linear, n = list length
   // Space: O(n)
-  print() {}
+  print() {
+    console.log(`${this.head.data} -> ${this.head.next}`);
+  }
 }
+
+const newStack = new LinkedListStack();
+newStack.push(10);
+newStack.print();
