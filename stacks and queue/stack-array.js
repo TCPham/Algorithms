@@ -21,10 +21,7 @@ class Stack {
    * @param {any} item The new item to be added to the top / back.
    * @returns {number} The new length of this stack.
    */
-  push(item) {
-    this.items.push(item);
-    return this.items.length;
-  }
+  push(item) {}
 
   /**
    * Removes the top / last item from this stack.
@@ -32,13 +29,7 @@ class Stack {
    * - Space: O(1) constant.
    * @returns {any} The removed item or undefined if this stack was empty.
    */
-  pop() {
-    if (this.isEmpty()) {
-      return null;
-    } else {
-      return this.items.pop();
-    }
-  }
+  pop() {}
 
   /**
    * Retrieves the top / last item from this stack without removing it.
@@ -46,9 +37,7 @@ class Stack {
    * - Space: O(1) constant.
    * @returns {any} The top / last item of this stack.
    */
-  peek() {
-    return this.items[this.items.length - 1];
-  }
+  peek() {}
 
   /**
    * Returns whether or not this stack is empty.
@@ -56,9 +45,7 @@ class Stack {
    * - Space: O(1) constant.
    * @returns {boolean}
    */
-  isEmpty() {
-    return this.items.length === 0;
-  }
+  isEmpty() {}
 
   /**
    * Returns the size of this stack.
@@ -66,9 +53,7 @@ class Stack {
    * - Space: O(1) constant.
    * @returns {number} The length.
    */
-  size() {
-    return this.items.length;
-  }
+  size() {}
 }
 
 const myStack = new Stack();
